@@ -129,7 +129,7 @@ if analysis_type == 'Home':
     This data analysis app allows users to upload their data and perform analyses by simply uploading the CSV data file.
     """)
 
-    st.header('Available Analyses')
+    st.header('Available Analysis')
     st.write("""
     - **Response Distribution**
     - **Education Analysis**
