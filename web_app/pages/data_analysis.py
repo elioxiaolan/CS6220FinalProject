@@ -107,13 +107,22 @@ def show_correlation_matrix(df):
     st.pyplot(plt.gcf())
 
 
+def show_all_distribution(train):
+    categorical_cols = ['age', 'job', 'marital', 'education', 'default', 'housing', 'loan', 'contact', 
+                        'month', 'day_of_week', 'campaign', 'poutcome']
+    for col in categorical_cols:
+        fig, ax = plt.subplots(figsize=(10, 6))  
+        sns.countplot(y=col, hue='y', data=train, order=train[col].value_counts().index, ax=ax)
+        st.pyplot(fig)
+
+
 # App UI
 st.sidebar.header('User Input')
 uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
 
 analysis_options = [
     'Home',  
-    'Response Distribution', 'Education Analysis', 'Job Analysis',
+    'Response Distribution', 'Various Features Distribution', 'Education Analysis', 'Job Analysis',
     'Credit Default Analysis', 'Housing Analysis', 'Loan Analysis',
     'Marital Status Analysis', 'Age Analysis', 'Correlation Heatmap',
     'Age Distribution', 'Job Distribution', 'Numerical Feature Correlations'
@@ -132,6 +141,7 @@ if analysis_type == 'Home':
     st.header('Available Analysis')
     st.write("""
     - **Response Distribution**
+    - **Various Features Distribution**
     - **Education Analysis**
     - **Job Analysis**
     - **Credit Default Analysis**
@@ -207,8 +217,11 @@ elif uploaded_file is not None:
         st.header('Correlation Matrix for Numerical Features')
         show_correlation_matrix(train)
 
+    elif analysis_type == 'Various Features Distribution':
+        st.header('Various Features Distribution')
+        show_all_distribution(train)
 
 
 else:
     if analysis_type != 'Home':
-        st.info('Waiting for CSV file to be uploaded.')
+        st.info('Upload CSV file before selecting.')

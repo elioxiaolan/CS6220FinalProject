@@ -12,6 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import logging
 
+
 # Setting up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -97,13 +98,14 @@ def preprocess_and_train(data, model, model_name):
 
     except Exception as e:
         logger.error("Error during model evaluation: %s", e)
-        st.error(f"An error occurred during model evaluation. Error: {e}")
+        st.error("An error occurred during model evaluation. Error:", {e})
+        #st.error(f"An error occurred during model evaluation. Error: {e}")
+
 
 # Streamlit UI
 st.title('Model Training and Performance Evaluation Dashboard')
 
 st.header('About This App')
-
 st.write("""
 This app allows users to train and evaluate models by simply uploading their CSV data file.
 """)
