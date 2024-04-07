@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, roc_curve, auc, confusion_matrix, ConfusionMatrixDisplay, precision_recall_curve
+from sklearn.metrics import accuracy_score, classification_report, roc_curve, auc, confusion_matrix, \
+    ConfusionMatrixDisplay, precision_recall_curve
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -12,10 +13,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import logging
 
-
 # Setting up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def preprocess_and_train(data, model, model_name):
     # Checking missing values
@@ -35,7 +36,8 @@ def preprocess_and_train(data, model, model_name):
     X = data.drop('label', axis=1)
     y = data['label']
 
-    categorical_features = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'contact', 'month', 'day_of_week', 'poutcome']
+    categorical_features = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'contact', 'month',
+                            'day_of_week', 'poutcome']
     numerical_features = ['age', 'duration', 'campaign']
 
     preprocessor = ColumnTransformer(
@@ -70,11 +72,11 @@ def preprocess_and_train(data, model, model_name):
         disp.plot(ax=ax)
         st.pyplot(fig)
 
-        if hasattr(model, "predict_proba"):  
+        if hasattr(model, "predict_proba"):
             probas_ = pipeline.predict_proba(X_test)[:, 1]
             fpr, tpr, thresholds = roc_curve(y_test, probas_)
             roc_auc = auc(fpr, tpr)
-            
+
             # ROC curve
             plt.figure()
             plt.plot(fpr, tpr, label=f'ROC (AUC = {roc_auc:.2f})', lw=2)
@@ -84,10 +86,10 @@ def preprocess_and_train(data, model, model_name):
             plt.title(f'ROC Curve for {model_name}')
             plt.legend(loc="lower right")
             st.pyplot(plt)
-            
+
             # Precision recall curve
             precision, recall, _ = precision_recall_curve(y_test, probas_)
-            
+
             plt.figure()
             plt.plot(recall, precision, marker='.', label=model_name)
             plt.xlabel('Recall')
@@ -99,7 +101,7 @@ def preprocess_and_train(data, model, model_name):
     except Exception as e:
         logger.error("Error during model evaluation: %s", e)
         st.error("An error occurred during model evaluation. Error:", {e})
-        #st.error(f"An error occurred during model evaluation. Error: {e}")
+        # st.error(f"An error occurred during model evaluation. Error: {e}")
 
 
 # Streamlit UI
@@ -121,7 +123,6 @@ st.write("""
 Might required additional time to generate result, especially for SVM.
 """)
 
-
 st.header('Getting Start')
 st.write("""
 1. Upload your CSV file.
@@ -129,11 +130,10 @@ st.write("""
 3. View the results on the dashboard.
 """)
 
-
 uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
 if uploaded_file is not None:
     data = pd.read_csv(uploaded_file)
-    
+
     model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
 
     if model_option == "Logistic Regression":
