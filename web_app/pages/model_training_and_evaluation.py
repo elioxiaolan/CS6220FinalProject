@@ -13,20 +13,17 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import logging
 
-# Setting up logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 def preprocess_and_train(data, model, model_name):
-    # Checking missing values
     if data.isnull().any().any():
         st.warning("Missing values detected. Auto-imputing missing values.")
         for column in data.columns:
-            # Categorical
             if data[column].dtype == 'object':
                 data[column].fillna(data[column].mode()[0], inplace=True)
-            # Numerical
             else:
                 data[column].fillna(data[column].median(), inplace=True)
 
@@ -101,50 +98,53 @@ def preprocess_and_train(data, model, model_name):
     except Exception as e:
         logger.error("Error during model evaluation: %s", e)
         st.error("An error occurred during model evaluation. Error:", {e})
-        # st.error(f"An error occurred during model evaluation. Error: {e}")
 
 
-# Streamlit UI
-st.title('Model Training and Performance Evaluation Dashboard')
+def main():
+    st.title('Model Training and Performance Evaluation Dashboard')
 
-st.header('About This App')
-st.write("""
-This app allows users to train and evaluate models by simply uploading their CSV data file.
-""")
+    st.header('About This App')
+    st.write("""
+    This app allows users to train and evaluate models by simply uploading their CSV data file.
+    """)
 
-st.header('Available Models')
-st.write("""
-    - **Logistic Regression**
-    - **Random Forest**
-    - **SVM**
-""")
+    st.header('Available Models')
+    st.write("""
+        - **Logistic Regression**
+        - **Random Forest**
+        - **SVM**
+    """)
 
-st.write("""
-Might required additional time to generate result, especially for SVM.
-""")
+    st.write("""
+    Might required additional time to generate result, especially for SVM.
+    """)
 
-st.header('Getting Start')
-st.write("""
-1. Upload your CSV file.
-2. Select the type of model you want to perform.
-3. View the results on the dashboard.
-""")
+    st.header('Getting Start')
+    st.write("""
+    1. Upload your CSV file.
+    2. Select the type of model you want to perform.
+    3. View the results on the dashboard.
+    """)
 
-uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+    uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
+    if uploaded_file is not None:
+        data = pd.read_csv(uploaded_file)
 
-    model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
+        model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
 
-    if model_option == "Logistic Regression":
-        model = LogisticRegression(solver='liblinear', max_iter=1000)
-        model_name = "Logistic Regression"
-    elif model_option == "Random Forest":
-        model = RandomForestClassifier()
-        model_name = "Random Forest"
-    elif model_option == "SVM":
-        model = SVC(probability=True)
-        model_name = "SVM"
+        if model_option == "Logistic Regression":
+            model = LogisticRegression(solver='liblinear', max_iter=1000)
+            model_name = "Logistic Regression"
+        elif model_option == "Random Forest":
+            model = RandomForestClassifier()
+            model_name = "Random Forest"
+        elif model_option == "SVM":
+            model = SVC(probability=True)
+            model_name = "SVM"
 
-    if st.button("Train and Evaluate Model"):
-        preprocess_and_train(data, model, model_name)
+        if st.button("Train and Evaluate Model"):
+            preprocess_and_train(data, model, model_name)
+
+
+if __name__ == '__main__':
+    main()
