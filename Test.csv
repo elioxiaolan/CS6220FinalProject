@@ -1,0 +1,4 @@
+﻿age,job,marital,education,default,housing,loan,contact,month,day_of_week,duration,campaign,poutcome
+49,blue-collar,married,basic.9y,unknown,no,no,cellular,nov,wed,227,4,nonexistent
+37,entrepreneur,married,university.degree,no,no,no,telephone,nov,wed,202,2,failure
+55,retired,married,basic.4y,no,no,no,cellular,jul,mon,550,1,nonexistent

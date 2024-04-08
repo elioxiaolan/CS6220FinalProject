@@ -1,17 +1,12 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, roc_curve, auc, confusion_matrix, \
-    ConfusionMatrixDisplay, precision_recall_curve
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
 import logging
+from joblib import load
 
 # Setting up logging
 logging.basicConfig(level=logging.INFO)
@@ -258,6 +253,38 @@ def preprocess_and_train(data, model, model_name):
     return pipeline
 
 
+def predict_single(input_df):
+    if input_model in input_models:
+        model_path = f"../models/{input_model}.joblib"
+        model = load(model_path)
+
+        prediction = model.predict(input_df)
+        probability = model.predict_proba(input_df)[:, 1]
+
+        predicted_label = 'Subscribe' if prediction[0] == 1 else 'Not Subscribe'
+        st.write(f"Predicted Label: {predicted_label}, Probability: {probability[0]:.4f}")
+    else:
+        st.warning("Please select a valid model to predict.")
+
+
+def predict_multiple(input_df):
+    if input_model in input_models:
+        model_path = f"../models/{input_model}.joblib"
+        model = load(model_path)
+
+        predictions = model.predict(input_df)
+        probabilities = model.predict_proba(input_df)[:, 1]
+
+        input_df['predicted_label'] = predictions
+        input_df['predicted_label'] = input_df['predicted_label'].apply(lambda x: 'Subscribe' if x == 1 else 'Not Subscribe')
+        input_df['probability'] = probabilities
+
+        st.write("Prediction Results:")
+        st.dataframe(input_df)
+    else:
+        st.warning("Please select a valid model to predict.")
+
+
 # Streamlit UI
 st.title("Model Prediction")
 
@@ -272,21 +299,25 @@ st.write("""
     - **SVM**
 """)
 
-st.write("""
-Might required additional time to generate result, especially for SVM.
-""")
+input_models = [
+    "  ",
+    "Logistic Regression",
+    "Random Forest",
+    "SVM"
+]
 
-input_options = [
+input_model = st.selectbox("Please select a model: ", input_models)
+
+input_types = [
     "  ",
     "Manually Input",
     "Upload CSV Data Files"
 ]
 
-st.header("Available Options")
-input_type = st.selectbox("Please select an option: ", input_options)
+input_type = st.selectbox("Please select an option: ", input_types)
 
 if input_type == "Manually Input":
-    st.title("Enter Your Information: ")
+    st.header("Enter Your Information: ")
 
     # Age
     age_input = st.text_input("Age")
@@ -359,44 +390,47 @@ if input_type == "Manually Input":
 
     input_data = {
         "age": [age],
-        'job': [job],
-        'marital': [marital_status],
-        'education': [education_status],
-        'default': [default_status],
-        'housing': [housing_status],
-        'loan': [loan_status],
-        'contact': [contact_type],
-        'month': [month],
-        'day_of_week': [day_of_week],
-        'duration': [duration],
-        'campaign': [number_of_contact],
-        'poutcome': [previous_outcome]
+        "job": [job],
+        "marital": [marital_status],
+        "education": [education_status],
+        "default": [default_status],
+        "housing": [housing_status],
+        "loan": [loan_status],
+        "contact": [contact_type],
+        "month": [month],
+        "day_of_week": [day_of_week],
+        "duration": [duration],
+        "campaign": [number_of_contact],
+        "poutcome": [previous_outcome]
     }
 
     input_df = pd.DataFrame.from_dict(input_data)
 
-st.header("Getting Start")
-st.write("""
-1. Upload your CSV file.
-2. Select the type of model you want to perform.
-3. View the results on the dashboard.
-""")
+    if st.button("Predict"):
+        predict_single(input_df)
+elif input_type == "Upload CSV Data Files":
+    st.header("Upload Your CSV Files: ")
+    uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
 
-uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+    if uploaded_file is not None:
+        data = pd.read_csv(uploaded_file)
 
-    model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
+        processed_data = {
+            'age': data['age'].apply(process_age_input),
+            'job': data['job'].map(lambda x: process_job(x)),
+            'marital': data['marital'].map(lambda x: process_marital_status(x)),
+            'education': data['education'].map(lambda x: process_education_status(x)),
+            'default': data['default'].map(lambda x: process_default_status(x)),
+            'housing': data['housing'].map(lambda x: process_housing_status(x)),
+            'loan': data['loan'].map(lambda x: process_loan_status(x)),
+            'contact': data['contact'].map(lambda x: process_contact(x)),
+            'month': data['month'].map(lambda x: process_month(x)),
+            'day_of_week': data['day_of_week'].map(lambda x: process_day_of_week(x)),
+            'duration': data['duration'].apply(process_duration_input),
+            'campaign': data['campaign'].apply(process_number_of_contact),
+            'poutcome': data['poutcome'].map(lambda x: process_previous_outcome(x)),
+        }
+        input_df = pd.DataFrame(processed_data)
 
-    if model_option == "Logistic Regression":
-        model = LogisticRegression(solver="liblinear", max_iter=1000)
-        model_name = "Logistic Regression"
-    elif model_option == "Random Forest":
-        model = RandomForestClassifier()
-        model_name = "Random Forest"
-    elif model_option == "SVM":
-        model = SVC(probability=True)
-        model_name = "SVM"
-
-    if st.button("Train and Evaluate Model"):
-        preprocess_and_train(data, model, model_name)
+        if st.button("Predict"):
+            predict_multiple(input_df)
