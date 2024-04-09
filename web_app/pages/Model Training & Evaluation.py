@@ -22,34 +22,34 @@ def preprocess_and_train(data, model, model_name):
     if data.isnull().any().any():
         st.warning("Missing values detected. Auto-imputing missing values.")
         for column in data.columns:
-            if data[column].dtype == 'object':
+            if data[column].dtype == "object":
                 data[column].fillna(data[column].mode()[0], inplace=True)
             else:
                 data[column].fillna(data[column].median(), inplace=True)
 
-    data['label'] = data['y'].apply(lambda x: 1 if x == 'yes' else 0)
-    data.drop('y', axis=1, inplace=True)
+    data["label"] = data["y"].apply(lambda x: 1 if x == "yes" else 0)
+    data.drop("y", axis=1, inplace=True)
 
-    X = data.drop('label', axis=1)
-    y = data['label']
+    X = data.drop("label", axis=1)
+    y = data["label"]
 
-    categorical_features = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'contact', 'month',
-                            'day_of_week', 'poutcome']
-    numerical_features = ['age', 'duration', 'campaign']
+    categorical_features = ["job", "marital", "education", "default", "housing", "loan", "contact", "month",
+                            "day_of_week", "poutcome"]
+    numerical_features = ["age", "duration", "campaign"]
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', StandardScaler(), numerical_features),
-            ('cat', OneHotEncoder(sparse_output=False), categorical_features)
+            ("num", StandardScaler(), numerical_features),
+            ("cat", OneHotEncoder(sparse_output=False), categorical_features)
         ])
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    pipeline = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', model)])
+    pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", model)])
 
     try:
         pipeline.fit(X_train, y_train)
-        cv_score = cross_val_score(pipeline, X_train, y_train, cv=5, scoring='accuracy')
+        cv_score = cross_val_score(pipeline, X_train, y_train, cv=5, scoring="accuracy")
         st.write(f"Cross-Validation Accuracy: {np.mean(cv_score):.4f} ± {np.std(cv_score):.4f}")
     except Exception as e:
         logger.error("Error during model training or cross-validation: %s", e)
@@ -76,11 +76,11 @@ def preprocess_and_train(data, model, model_name):
 
             # ROC curve
             plt.figure()
-            plt.plot(fpr, tpr, label=f'ROC (AUC = {roc_auc:.2f})', lw=2)
-            plt.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r', alpha=.8)
-            plt.xlabel('False Positive Rate')
-            plt.ylabel('True Positive Rate')
-            plt.title(f'ROC Curve for {model_name}')
+            plt.plot(fpr, tpr, label=f"ROC (AUC = {roc_auc:.2f})", lw=2)
+            plt.plot([0, 1], [0, 1], linestyle="--", lw=2, color="r", alpha=.8)
+            plt.xlabel("False Positive Rate")
+            plt.ylabel("True Positive Rate")
+            plt.title(f"ROC Curve for {model_name}")
             plt.legend(loc="lower right")
             st.pyplot(plt)
 
@@ -88,10 +88,10 @@ def preprocess_and_train(data, model, model_name):
             precision, recall, _ = precision_recall_curve(y_test, probas_)
 
             plt.figure()
-            plt.plot(recall, precision, marker='.', label=model_name)
-            plt.xlabel('Recall')
-            plt.ylabel('Precision')
-            plt.title(f'Precision-Recall Curve for {model_name}')
+            plt.plot(recall, precision, marker=".", label=model_name)
+            plt.xlabel("Recall")
+            plt.ylabel("Precision")
+            plt.title(f"Precision-Recall Curve for {model_name}")
             plt.legend()
             st.pyplot(plt)
 
@@ -101,14 +101,15 @@ def preprocess_and_train(data, model, model_name):
 
 
 def main():
-    st.title('Model Training and Performance Evaluation Dashboard')
+    st.title("Model Training & Performance Evaluation Dashboard 🤔")
 
-    st.header('About This App')
+    st.header("About This Feature")
     st.write("""
-    This app allows users to train and evaluate models by simply uploading their CSV data file.
+    This feature allows users to train and evaluate models and provide them visualizations for performance of various 
+    models by simply uploading their CSV data files.
     """)
 
-    st.header('Available Models')
+    st.header("Available Models")
     st.write("""
         - **Logistic Regression**
         - **Random Forest**
@@ -119,7 +120,7 @@ def main():
     Might required additional time to generate result, especially for SVM.
     """)
 
-    st.header('Getting Start')
+    st.header("Getting Start")
     st.write("""
     1. Upload your CSV file.
     2. Select the type of model you want to perform.
@@ -133,7 +134,7 @@ def main():
         model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
 
         if model_option == "Logistic Regression":
-            model = LogisticRegression(solver='liblinear', max_iter=1000)
+            model = LogisticRegression(solver="liblinear", max_iter=1000)
             model_name = "Logistic Regression"
         elif model_option == "Random Forest":
             model = RandomForestClassifier()
@@ -146,5 +147,5 @@ def main():
             preprocess_and_train(data, model, model_name)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

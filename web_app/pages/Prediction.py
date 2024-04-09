@@ -285,10 +285,10 @@ def predict_multiple(input_df):
 
 
 # Streamlit UI
-st.title("Model Prediction")
+st.title("Model Prediction 📈")
 
-st.header("About This App")
-st.write("""This app provides users prediction feature so that they can both manually choose various options and 
+st.header("About This Feature")
+st.write("""This feature provides users prediction feature so that they can both manually choose various options and 
 upload their CSV data files based on their respective circumstances.""")
 
 st.header("Available Models")
