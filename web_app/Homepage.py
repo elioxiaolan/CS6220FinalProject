@@ -1,12 +1,12 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Bank Marketing App",
+    page_title="Bank Marketing Campaign App",
 )
 
 st.sidebar.success("Select a page above.")
 
-st.title('Bank Marketing')
+st.title('💰Bank Marketing Campaign📈')
 
 st.header('About')
 

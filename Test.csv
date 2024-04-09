@@ -1,4 +1,4 @@
-﻿age,job,marital,education,default,housing,loan,contact,month,day_of_week,duration,campaign,poutcome
-49,blue-collar,married,basic.9y,unknown,no,no,cellular,nov,wed,227,4,nonexistent
-37,entrepreneur,married,university.degree,no,no,no,telephone,nov,wed,202,2,failure
-55,retired,married,basic.4y,no,no,no,cellular,jul,mon,550,1,nonexistent
+﻿Age,Job,Marital Status,Education Level,Default History,Housing Loan,Personal Loan,Contact Type,Last Contact Month,Last Contact Day,Last Call Duration (s),Contacts During Campaign,Previous Campaign Outcome
+49,Blue Collar,Married,9 Years of Basic Education (Nove Anos de Ensino Básico),Unknown,No,Yes,Cellular,November,Wednesday,227,4,Non-Existent
+37,Entrepreneur,Married,University Degree (Grau Universitário),No,No,Yes,Telephone,November,Wednesday,202,2,Failure
+55,Retired,Married,4 Years of Basic Education (Quatro Anos de Ensino Básico),No,No,Yes,Cellular,July,Monday,550,1,Non-Existent

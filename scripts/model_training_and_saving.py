@@ -11,9 +11,6 @@ import logging
 from joblib import dump
 
 
-import sklearn
-print(sklearn.__version__)
-
 # Setting up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
