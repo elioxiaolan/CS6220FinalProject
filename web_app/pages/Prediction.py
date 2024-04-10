@@ -413,7 +413,11 @@ elif input_type == "Upload CSV Data Files":
     if uploaded_file is not None:
         data = pd.read_csv(uploaded_file)
         st.header("Input Data Preview:")
-        st.table(data)
+        if len(data) > 100:
+            st.write("Data is too large to display. Showing the first 100 rows:")
+            st.dataframe(data.head(100))
+        else:
+            st.table(data)
 
         input_data = {
             "age": data["Age"].apply(process_age_input),
