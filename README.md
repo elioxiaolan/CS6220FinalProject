@@ -1,17 +1,17 @@
 # CS6220-Project
 
-## Setup Instructions to run streamlit app using Docker
+## Setup Instructions to run this app using Docker
 
 1. **Clone the Repository:** Clone the repository:
 
     ```bash
-    git clone [Your Repository URL]
+    git clone [Repository URL]
     ```
 
 2. **Navigate to the Repository Directory:** After cloning, navigate to the directory of the cloned repository:
 
     ```bash
-    cd [Your Repository Name]
+    cd [Repository Name]
     ```
 
 3. **Build the Docker Image:** Build the Docker image:
@@ -26,7 +26,7 @@
     docker run -p 8501:8501 streamlit_app
     ```
 
-5. **Access the Streamlit App:** Once the Docker container is running, open your web browser and go to http://localhost:8501 
+5. **Access the App:** Once the Docker container is running, open your web browser and go to http://localhost:8501 
 
 ## Additional Notes
 
