@@ -6,12 +6,11 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import logging
 
-
 mpl_logger = logging.getLogger("matplotlib")
 mpl_logger.setLevel(logging.WARNING)
 
-
 sns.set(style="whitegrid")
+
 
 @st.cache_data
 def load_data(uploaded_file):
@@ -20,10 +19,12 @@ def load_data(uploaded_file):
     df["age"] = pd.to_numeric(df["age"], errors="coerce")
     return df
 
+
 @st.cache_data
 def encode_features(df):
     le = LabelEncoder()
-    features_to_encode = ["education", "job", "default", "housing", "loan", "marital", "contact", "month", "day_of_week", "poutcome"]
+    features_to_encode = ["education", "job", "default", "housing", "loan", "marital", "contact", "month",
+                          "day_of_week", "poutcome"]
     for feature in features_to_encode:
         df[feature] = le.fit_transform(df[feature])
     return df
@@ -45,7 +46,7 @@ def plot_categorical_analysis(df, feature_name):
 def show_correlation_heatmap(df):
     numeric_df = df.select_dtypes(include=[np.number])
     plt.figure(figsize=(15, 12))
-    sns.heatmap(numeric_df.corr(), annot=True, cmap="RdYlGn", linewidths=0.2, annot_kws={"size":12})
+    sns.heatmap(numeric_df.corr(), annot=True, cmap="RdYlGn", linewidths=0.2, annot_kws={"size": 12})
     st.pyplot(plt.gcf())
 
 
@@ -54,8 +55,8 @@ def show_homepage():
 
     st.header("About This Feature")
     st.write("""
-    This feature allows users to upload their data and perform data analyses by simply uploading the CSV data files.
-    """)
+    This feature allows users to upload their data and perform various data analyses by simply uploading the CSV data 
+    files.""")
 
     st.header("Getting Start")
     st.write("""
@@ -74,7 +75,7 @@ def plot_duration_range_distribution(df):
     fig, ax = plt.subplots(figsize=(10, 6))
     order = df["duration_range"].value_counts().index.sort_values()
     sns.countplot(x="duration_range", hue="y", data=df, order=order, palette="viridis")
-    plt.xticks(rotation=45)  
+    plt.xticks(rotation=45)
     st.pyplot(fig)
 
 
@@ -83,15 +84,15 @@ def main():
     uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 
     analysis_options = [
-        "Home", "Response distribution", "Correlation heatmap", "All feature distributions"
-    ] + ["Distribution by " + col for col in [
-        "age", "job", "marital", "education", "default", "housing", "loan", "contact", 
+                           "Home", "Response distribution", "Correlation heatmap", "All feature distributions"
+                       ] + ["Distribution by " + col for col in [
+        "age", "job", "marital", "education", "default", "housing", "loan", "contact",
         "month", "day_of_week", "campaign", "poutcome"
     ]]
 
     selected_options = st.sidebar.multiselect(
-        "Choose analyses to display", 
-        analysis_options, 
+        "Choose analyses to display",
+        analysis_options,
         default=["Home"]
     )
 
@@ -124,7 +125,7 @@ def main():
                 feature_name = option.split("Distribution by ")[1]
                 st.header(f"{feature_name} distribution".title())
                 plot_categorical_analysis(df, feature_name)
-    
+
     else:
         if "Home" not in selected_options:
             st.info("Please upload a CSV file to begin the analysis.")

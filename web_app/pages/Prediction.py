@@ -1,10 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
 import logging
 from joblib import load
 
@@ -211,49 +206,6 @@ def process_previous_outcome(previous_outcome_input):
         return outcome_map[previous_outcome_input]
 
 
-def preprocess_and_train(data, model, model_name):
-    # Checking missing values
-    if data.isnull().any().any():
-        st.warning("Missing values detected. Auto-imputing missing values.")
-        for column in data.columns:
-            # Categorical
-            if data[column].dtype == "object":
-                data[column].fillna(data[column].mode()[0], inplace=True)
-            # Numerical
-            else:
-                data[column].fillna(data[column].median(), inplace=True)
-
-    data["label"] = data["y"].apply(lambda x: 1 if x == "yes" else 0)
-    data.drop("y", axis=1, inplace=True)
-
-    X = data.drop("label", axis=1)
-    y = data["label"]
-
-    categorical_features = ["job", "marital", "education", "default", "housing", "loan", "contact", "month",
-                            "day_of_week", "poutcome"]
-    numerical_features = ["age", "duration", "campaign"]
-
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ("num", StandardScaler(), numerical_features),
-            ("cat", OneHotEncoder(sparse_output=False), categorical_features)
-        ])
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-    pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", model)])
-
-    try:
-        pipeline.fit(X_train, y_train)
-        cv_score = cross_val_score(pipeline, X_train, y_train, cv=5, scoring="accuracy")
-        st.write(f"Cross-Validation Accuracy: {np.mean(cv_score):.4f} ± {np.std(cv_score):.4f}")
-    except Exception as e:
-        logger.error("Error during model training or cross-validation: %s", e)
-        st.error(f"Error occurred during model training or cross-validation. Error: {e}")
-
-    return pipeline
-
-
 def predict_single(input_df):
     if input_model in input_models:
         model_path = f"../models/{input_model}.joblib"
@@ -267,6 +219,7 @@ def predict_single(input_df):
         input_df["probability"] = probability
     else:
         st.warning("Please select a valid model to predict.")
+
 
 def predict_multiple(input_df):
     if input_model in input_models:
