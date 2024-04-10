@@ -2,7 +2,7 @@
 
 ## Setup Instructions to run streamlit app using Docker
 
-1. **Clone the Repository:** Clone the repository to your local machine using the following command:
+1. **Clone the Repository:** Clone the repository:
 
     ```bash
     git clone [Your Repository URL]
