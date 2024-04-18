@@ -23,7 +23,7 @@ def load_data(uploaded_file):
         if not expected_columns.issubset(df.columns):
             missing_columns = expected_columns - set(df.columns)
             st.error(f"Missing columns in the CSV file: {', '.join(missing_columns)}.")
-            st.error("Please upload a file with the correct structure.")
+            # st.error("Please upload a file with the correct structure.")
 
             return None
 
@@ -73,12 +73,11 @@ def show_homepage():
 
     st.header("About This Feature")
     st.write("""
-    This feature allows users to upload their data and perform various data analyses by simply uploading the CSV data 
-    files.""")
+    This feature allows bank managers to upload CSV data files and perform various data analyses.""")
 
     st.header("Getting Start")
     st.write("""
-    1. Use the sidebar to upload your CSV file.
+    1. Use the sidebar to upload your CSV file that matches the predefined format.
     2. Select the type of analysis you want to perform.
     3. View the results on the dashboard.
     """)

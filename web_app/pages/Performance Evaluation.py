@@ -101,29 +101,28 @@ def preprocess_and_train(data, model, model_name):
 
 
 def main():
-    st.title("Model Training & Performance Evaluation Dashboard 🤔")
+    st.title("Performance Evaluation Dashboard 🤔")
 
     st.header("About This Feature")
     st.write("""
-    This feature allows users to train and evaluate models and provide them visualizations for performance of various 
-    models by simply uploading their CSV data files.
+    This feature allows bank managers to view performance metrics of selected models by uploading CSV data files.
     """)
 
-    st.header("Available Models")
+    st.header("Optimally Selected Models")
     st.write("""
         - **Logistic Regression**
-        - **Random Forest**
-        - **SVM**
+        - **Random Forest (Our Final Choice for Prediction)**
+        - **Support Vector Machine (SVM)**
     """)
 
-    st.write("""
-    Might require additional time to generate result, especially for SVM.
+    st.warning("""
+    Might require additional time to generate results, especially for SVM.
     """)
 
     st.header("Getting Started")
     st.write("""
-    1. Upload your CSV file.
-    2. Select the type of model you want to perform.
+    1. Upload your CSV file that matches the predefined format.
+    2. Select the type of model you want to view.
     3. View the results on the dashboard.
     """)
 

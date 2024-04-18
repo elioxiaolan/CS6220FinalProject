@@ -207,7 +207,6 @@ def process_previous_outcome(previous_outcome_input):
 
 
 def predict_single(input_df):
-    # if input_model in input_models:
     model_path = f"../models/{input_model}.joblib"
     model = load(model_path)
 
@@ -217,12 +216,9 @@ def predict_single(input_df):
 
     input_df["predicted_label"] = predicted_label
     input_df["probability"] = probability
-    # else:
-    #     st.warning("Please select a valid model to predict.")
 
 
 def predict_multiple(input_df):
-    # if input_model in input_models:
     model_path = f"../models/{input_model}.joblib"
     model = load(model_path)
 
@@ -233,32 +229,15 @@ def predict_multiple(input_df):
     input_df["predicted_label"] = input_df["predicted_label"].apply(lambda x: "Subscribe" if x == 1
                                                                         else "Not Subscribe")
     input_df["probability"] = probabilities
-    # else:
-    #     st.warning("Please select a valid model to predict.")
 
 
 # Streamlit UI
 st.title("Model Prediction 📈")
 
 st.header("About This Feature")
-st.write("""This feature provides users prediction feature so that they can both manually choose various options and 
-upload their CSV data files based on their respective circumstances.""")
+st.write("""This feature provides users prediction functionality so that they can both manually choose options and 
+upload their CSV data files based on their personal circumstances.""")
 
-# st.header("Available Models")
-# st.write("""
-#     - **Logistic Regression**
-#     - **Random Forest**
-#     - **SVM**
-# """)
-#
-# input_models = [
-#     "  ",
-#     "Logistic Regression",
-#     "Random Forest",
-#     "SVM"
-# ]
-#
-# input_model = st.selectbox("Please select a model: ", input_models)
 input_model = "Random Forest"
 
 input_types = [
@@ -462,18 +441,3 @@ elif input_type == "Upload CSV Data Files":
                     st.table(data)
         except Exception as e:
             st.error(f"An error occurred while processing the CSV file: {e}")
-
-        # uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
-        # if uploaded_file is not None:
-        #     try:
-        #         data = pd.read_csv(uploaded_file)
-        #
-        #         # Check for the expected columns in the dataset
-        #         expected_columns = {"age", "job", "marital", "education", "default", "housing", "loan", "contact",
-        #                             "month",
-        #                             "day_of_week", "duration", "campaign", "poutcome", "y"}
-        #         if not expected_columns.issubset(data.columns):
-        #             missing_columns = expected_columns - set(data.columns)
-        #             st.error(f"Missing columns in the uploaded file: {', '.join(missing_columns)}. "
-        #                      "Please upload a CSV file with the correct structure.")
-        #             return
