@@ -117,35 +117,52 @@ def main():
     """)
 
     st.write("""
-    Might required additional time to generate result, especially for SVM.
+    Might require additional time to generate result, especially for SVM.
     """)
 
-    st.header("Getting Start")
+    st.header("Getting Started")
     st.write("""
     1. Upload your CSV file.
     2. Select the type of model you want to perform.
     3. View the results on the dashboard.
     """)
 
+    default_file_path = f"../new_train2.csv"
+    st.warning("Desired CSV Format Is As Followed. Please Match It.")
+    st.table(pd.read_csv(default_file_path).head(5))
+
     uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
     if uploaded_file is not None:
-        data = pd.read_csv(uploaded_file)
+        try:
+            data = pd.read_csv(uploaded_file)
 
-        model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
+            # Check for the expected columns in the dataset
+            expected_columns = {"age", "job", "marital", "education", "default", "housing", "loan", "contact", "month",
+                                "day_of_week", "duration", "campaign", "poutcome", "y"}
+            if not expected_columns.issubset(data.columns):
+                missing_columns = expected_columns - set(data.columns)
+                st.error(f"Missing columns in the CSV file: {', '.join(missing_columns)}.")
+                st.error("Please upload a file with the correct structure.")
+                return
 
-        if model_option == "Logistic Regression":
-            model = LogisticRegression(solver="liblinear", max_iter=1000)
-            model_name = "Logistic Regression"
-        elif model_option == "Random Forest":
-            model = RandomForestClassifier()
-            model_name = "Random Forest"
-        elif model_option == "SVM":
-            model = SVC(probability=True)
-            model_name = "SVM"
+            model_option = st.selectbox("Select a model", ("Logistic Regression", "Random Forest", "SVM"))
 
-        if st.button("Train and Evaluate Model"):
-            preprocess_and_train(data, model, model_name)
+            if model_option == "Logistic Regression":
+                model = LogisticRegression(solver="liblinear", max_iter=1000)
+                model_name = "Logistic Regression"
+            elif model_option == "Random Forest":
+                model = RandomForestClassifier()
+                model_name = "Random Forest"
+            elif model_option == "SVM":
+                model = SVC(probability=True)
+                model_name = "SVM"
 
+            if st.button("Train and Evaluate Model"):
+                preprocess_and_train(data, model, model_name)
+
+        except Exception as e:
+            st.error(f"An error occurred while processing the CSV file: {e}")
 
 if __name__ == "__main__":
     main()
+

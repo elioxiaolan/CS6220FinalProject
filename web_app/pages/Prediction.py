@@ -207,34 +207,34 @@ def process_previous_outcome(previous_outcome_input):
 
 
 def predict_single(input_df):
-    if input_model in input_models:
-        model_path = f"../models/{input_model}.joblib"
-        model = load(model_path)
+    # if input_model in input_models:
+    model_path = f"../models/{input_model}.joblib"
+    model = load(model_path)
 
-        prediction = model.predict(input_df)
-        predicted_label = "Subscribe" if prediction[0] == 1 else "Not Subscribe"
-        probability = model.predict_proba(input_df)[:, 1]
+    prediction = model.predict(input_df)
+    predicted_label = "Subscribe" if prediction[0] == 1 else "Not Subscribe"
+    probability = model.predict_proba(input_df)[:, 1]
 
-        input_df["predicted_label"] = predicted_label
-        input_df["probability"] = probability
-    else:
-        st.warning("Please select a valid model to predict.")
+    input_df["predicted_label"] = predicted_label
+    input_df["probability"] = probability
+    # else:
+    #     st.warning("Please select a valid model to predict.")
 
 
 def predict_multiple(input_df):
-    if input_model in input_models:
-        model_path = f"../models/{input_model}.joblib"
-        model = load(model_path)
+    # if input_model in input_models:
+    model_path = f"../models/{input_model}.joblib"
+    model = load(model_path)
 
-        predictions = model.predict(input_df)
-        probabilities = model.predict_proba(input_df)[:, 1]
+    predictions = model.predict(input_df)
+    probabilities = model.predict_proba(input_df)[:, 1]
 
-        input_df["predicted_label"] = predictions
-        input_df["predicted_label"] = input_df["predicted_label"].apply(lambda x: "Subscribe" if x == 1
+    input_df["predicted_label"] = predictions
+    input_df["predicted_label"] = input_df["predicted_label"].apply(lambda x: "Subscribe" if x == 1
                                                                         else "Not Subscribe")
-        input_df["probability"] = probabilities
-    else:
-        st.warning("Please select a valid model to predict.")
+    input_df["probability"] = probabilities
+    # else:
+    #     st.warning("Please select a valid model to predict.")
 
 
 # Streamlit UI
@@ -244,21 +244,22 @@ st.header("About This Feature")
 st.write("""This feature provides users prediction feature so that they can both manually choose various options and 
 upload their CSV data files based on their respective circumstances.""")
 
-st.header("Available Models")
-st.write("""
-    - **Logistic Regression**
-    - **Random Forest**
-    - **SVM**
-""")
-
-input_models = [
-    "  ",
-    "Logistic Regression",
-    "Random Forest",
-    "SVM"
-]
-
-input_model = st.selectbox("Please select a model: ", input_models)
+# st.header("Available Models")
+# st.write("""
+#     - **Logistic Regression**
+#     - **Random Forest**
+#     - **SVM**
+# """)
+#
+# input_models = [
+#     "  ",
+#     "Logistic Regression",
+#     "Random Forest",
+#     "SVM"
+# ]
+#
+# input_model = st.selectbox("Please select a model: ", input_models)
+input_model = "Random Forest"
 
 input_types = [
     "  ",
@@ -410,39 +411,69 @@ elif input_type == "Upload CSV Data Files":
     st.header("Upload Your CSV Files: ")
     uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
 
+    default_file_path = f"../Test.csv"
+    st.warning("Desired CSV Format Is As Followed. Please Match It.")
+    st.table(pd.read_csv(default_file_path))
+
     if uploaded_file is not None:
-        data = pd.read_csv(uploaded_file)
-        st.header("Input Data Preview:")
-        if len(data) > 100:
-            st.write("Data is too large to display. Showing the first 100 rows:")
-            st.dataframe(data.head(100))
-        else:
-            st.table(data)
+        try:
+            data = pd.read_csv(uploaded_file)
+            expected_columns = {"Age", "Job", "Marital Status", "Education Level", "Default History", "Housing Loan",
+                                "Personal Loan", "Contact Type", "Last Contact Month", "Last Contact Day",
+                                "Last Call Duration (s)", "Contacts During Campaign", "Previous Campaign Outcome"}
+            if not expected_columns.issubset(data.columns):
+                missing_columns = expected_columns - set(data.columns)
+                st.error(f"Missing columns in the CSV file: {', '.join(missing_columns)}.")
+                st.error("Please upload a file with the correct structure.")
+            else:
+                st.header("Input Data Preview:")
+                if len(data) > 100:
+                    st.write("Data is too large to display. Showing the first 100 rows:")
+                    st.dataframe(data.head(100))
+                else:
+                    st.table(data)
 
-        input_data = {
-            "age": data["Age"].apply(process_age_input),
-            "job": data["Job"].map(lambda x: process_job(x)),
-            "marital": data["Marital Status"].map(lambda x: process_marital_status(x)),
-            "education": data["Education Level"].map(lambda x: process_education_status(x)),
-            "default": data["Default History"].map(lambda x: process_default_status(x)),
-            "housing": data["Housing Loan"].map(lambda x: process_housing_status(x)),
-            "loan": data["Personal Loan"].map(lambda x: process_loan_status(x)),
-            "contact": data["Contact Type"].map(lambda x: process_contact(x)),
-            "month": data["Last Contact Month"].map(lambda x: process_month(x)),
-            "day_of_week": data["Last Contact Day"].map(lambda x: process_day_of_week(x)),
-            "duration": data["Last Call Duration (s)"].apply(process_duration_input),
-            "campaign": data["Contacts During Campaign"].apply(process_number_of_contact),
-            "poutcome": data["Previous Campaign Outcome"].map(lambda x: process_previous_outcome(x)),
-        }
-        input_df = pd.DataFrame(input_data)
+                input_data = {
+                    "age": data["Age"].apply(process_age_input),
+                    "job": data["Job"].map(lambda x: process_job(x)),
+                    "marital": data["Marital Status"].map(lambda x: process_marital_status(x)),
+                    "education": data["Education Level"].map(lambda x: process_education_status(x)),
+                    "default": data["Default History"].map(lambda x: process_default_status(x)),
+                    "housing": data["Housing Loan"].map(lambda x: process_housing_status(x)),
+                    "loan": data["Personal Loan"].map(lambda x: process_loan_status(x)),
+                    "contact": data["Contact Type"].map(lambda x: process_contact(x)),
+                    "month": data["Last Contact Month"].map(lambda x: process_month(x)),
+                    "day_of_week": data["Last Contact Day"].map(lambda x: process_day_of_week(x)),
+                    "duration": data["Last Call Duration (s)"].apply(process_duration_input),
+                    "campaign": data["Contacts During Campaign"].apply(process_number_of_contact),
+                    "poutcome": data["Previous Campaign Outcome"].map(lambda x: process_previous_outcome(x)),
+                }
+                input_df = pd.DataFrame(input_data)
 
-        if st.button("Predict"):
-            predict_multiple(input_df)
+                if st.button("Predict"):
+                    predict_multiple(input_df)
 
-            data["Predicted Subscription Status"] = input_df["predicted_label"]
-            data["Prediction Probability"] = input_df["probability"]
+                    data["Predicted Subscription Status"] = input_df["predicted_label"]
+                    data["Prediction Probability"] = input_df["probability"]
 
-            st.success('Done!')
-            st.balloons()
-            st.header("Prediction Results with Input Data:")
-            st.table(data)
+                    st.success('Done!')
+                    st.balloons()
+                    st.header("Prediction Results with Input Data:")
+                    st.table(data)
+        except Exception as e:
+            st.error(f"An error occurred while processing the CSV file: {e}")
+
+        # uploaded_file = st.file_uploader("Upload your input CSV file", type="csv")
+        # if uploaded_file is not None:
+        #     try:
+        #         data = pd.read_csv(uploaded_file)
+        #
+        #         # Check for the expected columns in the dataset
+        #         expected_columns = {"age", "job", "marital", "education", "default", "housing", "loan", "contact",
+        #                             "month",
+        #                             "day_of_week", "duration", "campaign", "poutcome", "y"}
+        #         if not expected_columns.issubset(data.columns):
+        #             missing_columns = expected_columns - set(data.columns)
+        #             st.error(f"Missing columns in the uploaded file: {', '.join(missing_columns)}. "
+        #                      "Please upload a CSV file with the correct structure.")
+        #             return

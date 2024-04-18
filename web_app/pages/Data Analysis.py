@@ -14,10 +14,28 @@ sns.set(style="whitegrid")
 
 @st.cache_data
 def load_data(uploaded_file):
-    df = pd.read_csv(uploaded_file)
-    df["y"] = df["y"].eq("yes").mul(1)
-    df["age"] = pd.to_numeric(df["age"], errors="coerce")
-    return df
+    try:
+        df = pd.read_csv(uploaded_file)
+        expected_columns = {'age', 'job', 'marital', 'education', 'default',
+                            'housing', 'loan', 'contact', 'month', 'day_of_week',
+                            'duration', 'campaign', 'poutcome', 'y'}
+
+        if not expected_columns.issubset(df.columns):
+            missing_columns = expected_columns - set(df.columns)
+            st.error(f"Missing columns in the CSV file: {', '.join(missing_columns)}.")
+            st.error("Please upload a file with the correct structure.")
+
+            return None
+
+        if 'y' in df.columns:
+            df["y"] = df["y"].eq("yes").mul(1)
+
+        df["age"] = pd.to_numeric(df["age"], errors="coerce")
+
+        return df
+    except Exception as e:
+        st.error(f"An error occurred while reading the CSV file: {e}")
+        return None
 
 
 @st.cache_data
@@ -65,6 +83,10 @@ def show_homepage():
     3. View the results on the dashboard.
     """)
 
+    default_file_path = f"../new_train2.csv"
+    st.warning("Desired CSV Format Is As Followed. Please Match It.")
+    st.table(pd.read_csv(default_file_path).head(5))
+
 
 def categorize_duration(df):
     df["duration_range"] = pd.qcut(df["duration"], 10, duplicates="drop")
@@ -101,6 +123,10 @@ def main():
 
     if uploaded_file is not None:
         df = load_data(uploaded_file)
+        if df is None:
+            st.error("Failed to load data. Please check the format of your CSV file.")
+            return
+
         df = categorize_duration(df)
 
         if "Response distribution" in selected_options:
