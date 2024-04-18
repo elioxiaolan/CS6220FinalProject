@@ -30,5 +30,5 @@
 
 ## Additional Notes
 
-- new_Train2.csv: sample csv that could be used for Data Analysis and Model Training & Evaluation
+- new_train2.csv: sample csv that could be used for Data Analysis and Performance Evaluation
 - Test.csv: sample csv that could be used for Prediction
