@@ -5,8 +5,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from SCM
-                branches: [[name: '*/master']],
-                checkout scm
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    userRemoteConfigs: [[url: 'https://github.com/elioxiaolan/CS6220FinalProject']]
+                ])
             }
         }
 
