@@ -5,6 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from SCM
+                branches: [[name: '*/master']],
                 checkout scm
             }
         }
