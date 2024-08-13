@@ -2,6 +2,14 @@ pipeline {
     agent any
 
     stages {
+        stage('Check Docker Installation') {
+            steps {
+                script {
+                    sh 'docker --version'
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Checkout code from SCM
