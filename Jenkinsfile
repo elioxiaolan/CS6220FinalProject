@@ -10,42 +10,42 @@ pipeline {
             }
         }
 
-        stage('Checkout') {
-            steps {
-                // Checkout code from SCM
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    userRemoteConfigs: [[url: 'https://github.com/elioxiaolan/CS6220FinalProject']]
-                ])
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         // Checkout code from SCM
+        //         checkout([$class: 'GitSCM',
+        //             branches: [[name: '*/master']],
+        //             userRemoteConfigs: [[url: 'https://github.com/elioxiaolan/CS6220FinalProject']]
+        //         ])
+        //     }
+        // }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build the Docker image using the Dockerfile in the repository
-                    docker.build("streamlit_app:${env.BUILD_ID}")
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             // Build the Docker image using the Dockerfile in the repository
+        //             docker.build("streamlit_app:${env.BUILD_ID}")
+        //         }
+        //     }
+        // }
 
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    // Run the Docker container in detached mode
-                    sh 'docker run -d -p 8501:8501 --name streamlit_app_${env.BUILD_ID} streamlit_app:${env.BUILD_ID}'
-                }
-            }
-        }
+        // stage('Run Docker Container') {
+        //     steps {
+        //         script {
+        //             // Run the Docker container in detached mode
+        //             sh 'docker run -d -p 8501:8501 --name streamlit_app_${env.BUILD_ID} streamlit_app:${env.BUILD_ID}'
+        //         }
+        //     }
+        // }
 
-        stage('Test Application') {
-            steps {
-                script {
-                    // (Optional) Add steps to verify the application is running correctly
-                    sh 'curl -I http://localhost:8501'
-                }
-            }
-        }
+        // stage('Test Application') {
+        //     steps {
+        //         script {
+        //             // (Optional) Add steps to verify the application is running correctly
+        //             sh 'curl -I http://localhost:8501'
+        //         }
+        //     }
+        // }
     }
 
     post {
