@@ -15,7 +15,7 @@ pipeline {
                 // Checkout code from SCM
                 checkout([$class: 'GitSCM',
                     branches: [[name: '*/master']],
-                    userRemoteConfigs: [[url: 'https://github.com/elioxiaolan/CS6220FinalProject']]
+                    userRemoteConfigs: [[url: 'https://github.com/elioxiaolan/CS6220FinalProject.git']]
                 ])
             }
         }
