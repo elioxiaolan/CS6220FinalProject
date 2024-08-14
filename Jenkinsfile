@@ -12,11 +12,10 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                // Checkout code from SCM
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    userRemoteConfigs: [[url: 'https://github.com/elioxiaolan/CS6220FinalProject.git']]
-                ])
+                sh '''
+                git clone https://github.com/elioxiaolan/CS6220FinalProject.git
+                cd CS6220FinalProject
+                '''
             }
         }
 
