@@ -26,7 +26,7 @@ pipeline {
         stage('Test Application') {
             steps {
                 // Get the container IP address and store it in an environment variable
-                sh "CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' bank_marketing_app_container) && echo \$CONTAINER_IP"
+                sh 'CONTAINER_IP=$(docker inspect -f \'{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}\' bank_marketing_app_container) && echo $CONTAINER_IP'
         
                 // Use the container IP address to check if the app is running
                 sh 'curl -I http://$CONTAINER_IP:8501'
