@@ -30,5 +30,24 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            // Clean up: Stop and remove the Docker container
+            sh 'docker stop bank_marketing_app_container || true'
+            sh 'docker rm bank_marketing_app_container || true'
+            // Optionally clean up the Docker image
+            sh 'docker rmi bank_marketing_app || true'
+            cleanWs() // Clean workspace after build
+        }
+
+        success {
+            echo 'Docker image built, container started, and app is accessible!'
+        }
+
+        failure {
+            echo 'Something went wrong with the build, container, or app access.'
+        }
+    }
 }
 
