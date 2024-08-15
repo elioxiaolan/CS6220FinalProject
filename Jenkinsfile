@@ -19,7 +19,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 // Run the Docker container
-                sh 'docker run -p 8501:8501 bank_marketing_app'
+                sh 'docker run --name bank_marketing_app_container -p 8501:8501 bank_marketing_app'
             }
         }
 
