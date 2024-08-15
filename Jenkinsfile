@@ -2,67 +2,32 @@ pipeline {
     agent any
 
     stages {
-        stage('Check Docker Installation') {
+        stage('Clone Repository') {
             steps {
-                script {
-                    sh 'docker --version'
-                }
-            }
-        }
-
-        stage('Checkout') {
-            steps {
-                sh '''
-                git clone https://github.com/elioxiaolan/CS6220FinalProject.git
-                cd CS6220FinalProject
-                '''
+                // Cloning the repository to our workspace
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Build the Docker image using the Dockerfile in the repository
-                    docker.build("streamlit_app:${env.BUILD_ID}")
-                }
+                // Build the Docker image using the Dockerfile in the repository
+                sh 'sudo docker build -t bank_marketing_app .'
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                script {
-                    // Run the Docker container in detached mode
-                    sh 'docker run -d -p 8501:8501 --name streamlit_app_${env.BUILD_ID} streamlit_app:${env.BUILD_ID}'
-                }
+                // Run the Docker container
+                sh 'sudo docker run -p 8501:8501 bank_marketing_app'
             }
         }
 
         stage('Test Application') {
             steps {
-                script {
-                    // (Optional) Add steps to verify the application is running correctly
-                    sh 'curl -I http://localhost:8501'
-                }
+                // (Optional) Add steps to verify the application is running correctly
+                sh 'curl -I http://localhost:8501'
             }
-        }
-    }
-
-    post {
-        always {
-            // Clean up: Stop and remove the Docker container
-            sh 'docker stop streamlit_app_${env.BUILD_ID} || true'
-            sh 'docker rm streamlit_app_${env.BUILD_ID} || true'
-            // Optionally clean up the Docker image
-            sh 'docker rmi streamlit_app:${env.BUILD_ID} || true'
-            cleanWs() // Clean workspace after build
-        }
-
-        success {
-            echo 'Docker image built, container started, and app is accessible!'
-        }
-
-        failure {
-            echo 'Something went wrong with the build, container, or app access.'
         }
     }
 }
